@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
@@ -114,9 +115,8 @@ val postArr: List<Post> = listOf(
     Post(
         profile = userArr[0],
         postImages = arrayListOf(
-            R.drawable.ic_launcher_background,
             R.drawable.will_smith,
-            R.drawable.will_smith
+            R.drawable.boywithuke
         ),
         likes = 1000,
         comments = 100,
@@ -139,8 +139,8 @@ val postArr: List<Post> = listOf(
         profile = userArr[2],
         postImages = arrayListOf(
             R.drawable.mohammed_salah,
-            R.drawable.mohammed_salah,
-            R.drawable.mohammed_salah
+            R.drawable.nicki_minaj,
+            R.drawable.can_yaman
         ),
         likes = 100000,
         comments = 10000,
@@ -156,7 +156,18 @@ val postArr: List<Post> = listOf(
         comments = 100000,
         shares = 50000,
         caption = "Just posted a new video on my YouTube channel! Check it out!"
-    )
+    ),
+    Post(
+        profile = userArr[4],
+        postImages = arrayListOf(
+            R.drawable.nicki_minaj,
+            R.drawable.miles_morales
+        ),
+        likes = 10000000,
+        comments = 1000000,
+        shares = 500000,
+        caption = "Just posted a new video on my YouTube channel! Check it out!"
+    ),
 )
 
 class MainActivity : ComponentActivity() {
@@ -310,31 +321,20 @@ fun InstagramPostCard(
             IconButton(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
+                    .
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.more),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(25.dp)
+                        .size(24.dp)
                 )
             }
         }
 
         val screenWidth = LocalConfiguration.current.screenWidthDp.dp
         val lazyRowState = rememberLazyListState()
-        Column(
-            modifier = Modifier
-        ) {
-            Text(
-                text = "Post ${postArr.indexOf(post) + 1}",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    color = Color.Black
-                ),
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .
-            )
+        Box {
             LazyRow(
                 state = lazyRowState,
                 flingBehavior = rememberSnapFlingBehavior(lazyRowState)
@@ -350,8 +350,46 @@ fun InstagramPostCard(
                     )
                 }
             }
+            if (post.postImages.size > 1) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "${lazyRowState.firstVisibleItemIndex + 1}/${post.postImages.size}",
+                        style = TextStyle(color = Color.White, fontSize = 14.sp),
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.7f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(8.dp)
+                    ) {
+                    post.postImages.forEachIndexed { index, _ ->
+                        Box(
+                            modifier = Modifier
+                                .size(if (index == lazyRowState.firstVisibleItemIndex) 8.dp else 6.dp)
+                                .clip(CircleShape)
+                                .align(Alignment.CenterVertically)
+                                .background(
+                                    color = if (index == lazyRowState.firstVisibleItemIndex) Color.White else Color.Gray
+                                )
+                                .padding(2.dp)
+                        )
+                    }
+                }
+            }
         }
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -641,7 +679,7 @@ fun Test() {
     Column {
         UpperCard(modifier = Modifier)
         StoryList(userArr, modifier = Modifier)
-        InstagramPostCard(postArr[0], modifier = Modifier)
+        InstagramPostCard(postArr[1], modifier = Modifier)
         BottomCard(modifier = Modifier)
     }
 //    YourStory(modifier = Modifier, profile = userArr[0])
